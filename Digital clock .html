@@ -1,0 +1,320 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>Modern Clock App</title>  
+  
+<style>  
+/* ===================== BASE ===================== */  
+body {  
+  margin: 0;  
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;  
+  background: #0e1116;  
+  color: #eaeaea;  
+  display: flex;  
+  flex-direction: column;  
+  align-items: center;  
+  justify-content: center;  
+  min-height: 100vh;  
+  padding: 20px 0;  
+  transition: 0.3s;  
+}  
+  
+/* LIGHT MODE */  
+body.light {  
+  background: #f4f6f8;  
+  color: #111;  
+}  
+  
+/* TITLE */  
+h2 {  
+  font-size: 12px;  
+  letter-spacing: 5px;  
+  font-weight: 500;  
+  opacity: 0.6;  
+  margin-bottom: 20px;  
+}  
+  
+/* ===================== CLOCK ===================== */  
+.clock {  
+  display: flex;  
+  gap: 12px;  
+  padding: 24px 26px;  
+  border-radius: 16px;  
+  background: rgba(255,255,255,0.04);  
+  backdrop-filter: blur(10px);  
+  box-shadow: 0 18px 40px rgba(0,0,0,0.35);  
+}  
+  
+/* LIGHT MODE CARD */  
+body.light .clock {  
+  background: white;  
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);  
+}  
+  
+/* BLOCK */  
+.block {  
+  text-align: center;  
+}  
+  
+/* TIME */  
+.time {  
+  width: 85px;  
+  height: 75px;  
+  display: flex;  
+  align-items: center;  
+  justify-content: center;  
+  font-size: 38px;  
+  font-weight: 600;  
+  border-radius: 12px;  
+  background: rgba(255,255,255,0.05);  
+}  
+  
+/* LIGHT MODE TIME */  
+body.light .time {  
+  background: #f0f0f0;  
+}  
+  
+/* LABEL */  
+.label {  
+  margin-top: 6px;  
+  font-size: 10px;  
+  letter-spacing: 2px;  
+  opacity: 0.55;  
+}  
+  
+/* AM/PM */  
+#ampm {  
+  margin-top: 8px;  
+  font-size: 11px;  
+  opacity: 0.7;  
+}  
+  
+/* ===================== BUTTONS ===================== */  
+.controls {  
+  margin-top: 18px;  
+  display: flex;  
+  gap: 8px;  
+}  
+  
+button {  
+  padding: 8px 12px;  
+  border: none;  
+  border-radius: 8px;  
+  font-size: 12px;  
+  cursor: pointer;  
+  background: #2d6cdf;  
+  color: white;  
+}  
+  
+button:hover {  
+  opacity: 0.85;  
+}  
+  
+/* ===================== WORLD CLOCK TABLE ===================== */  
+.world {  
+  margin-top: 24px;  
+  width: 90%;  
+  max-width: 600px;  
+  transition: 0.3s;  
+}  
+  
+.world h3 {  
+  text-align: center;  
+  font-size: 11px;  
+  letter-spacing: 3px;  
+  font-weight: 500;  
+  opacity: 0.6;  
+  margin-bottom: 12px;  
+}  
+  
+table {  
+  width: 100%;  
+  border-collapse: collapse;  
+  border-radius: 12px;  
+  overflow: hidden;  
+  background: rgba(255,255,255,0.04);  
+  backdrop-filter: blur(10px);  
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);  
+}  
+  
+body.light table {  
+  background: white;  
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);  
+}  
+  
+th, td {  
+  padding: 10px 12px;  
+  text-align: left;  
+  font-size: 12px;  
+}  
+  
+th {  
+  font-size: 11px;  
+  letter-spacing: 1px;  
+  opacity: 0.7;  
+  background: rgba(255,255,255,0.06);  
+}  
+  
+body.light th {  
+  background: #f0f0f0;  
+}  
+  
+tr:not(:last-child) td {  
+  border-bottom: 1px solid rgba(255,255,255,0.06);  
+}  
+  
+body.light tr:not(:last-child) td {  
+  border-bottom: 1px solid #e8e8e8;  
+}  
+  
+.continent {  
+  font-weight: 600;  
+  opacity: 0.8;  
+}  
+  
+/* HIDDEN MODE */  
+.hidden {  
+  display: none;  
+}  
+</style>  
+</head>  
+  
+<body>  
+  
+<h2>MODERN CLOCK</h2>  
+  
+<!-- CLOCK -->  
+<div class="clock">  
+  <div class="block">  
+    <div class="time" id="h">00</div>  
+    <div class="label">HOURS</div>  
+  </div>  
+  
+  <div class="block">  
+    <div class="time" id="m">00</div>  
+    <div class="label">MINUTES</div>  
+  </div>  
+  
+  <div class="block">  
+    <div class="time" id="s">00</div>  
+    <div class="label">SECONDS</div>  
+    <div id="ampm">AM</div>  
+  </div>  
+</div>  
+  
+<!-- CONTROLS -->  
+<div class="controls">  
+  <button onclick="toggleTheme()">Theme</button>  
+  <button onclick="toggleWorld()">Focus Mode</button>  
+</div>  
+  
+<!-- WORLD CLOCK -->  
+<div class="world" id="world">  
+  <h3>WORLD CLOCK</h3>  
+  <table>  
+    <thead>  
+      <tr>  
+        <th>CONTINENT</th>  
+        <th>CITY</th>  
+        <th>TIME</th>  
+      </tr>  
+    </thead>  
+    <tbody id="world-body">  
+    </tbody>  
+  </table>  
+</div>  
+  
+<script>  
+  
+/* ================= CLOCK ================= */  
+function clock() {  
+  const d = new Date();  
+  
+  let h = d.getHours();  
+  let m = d.getMinutes();  
+  let s = d.getSeconds();  
+  let ampm = "AM";  
+  
+  if (h >= 12) {  
+    ampm = "PM";  
+    if (h > 12) h -= 12;  
+  }  
+  if (h === 0) h = 12;  
+  
+  set("h", h);  
+  set("m", m);  
+  set("s", s);  
+  
+  document.getElementById("ampm").innerText = ampm;  
+}  
+  
+function set(id, val) {  
+  document.getElementById(id).innerText =  
+    val < 10? "0" + val : val;  
+}  
+  
+/* ================= THEME ================= */  
+function toggleTheme() {  
+  document.body.classList.toggle("light");  
+}  
+  
+/* ================= FOCUS MODE ================= */  
+function toggleWorld() {  
+  document.getElementById("world").classList.toggle("hidden");  
+}  
+  
+/* ================= WORLD CLOCK ================= */  
+function world(){  
+  const cities = [  
+    { continent: "Africa", flag: "🇨🇲", city: "Douala", tz: "Africa/Douala" },  
+    { continent: "Africa", flag: "🇳🇬", city: "Lagos", tz: "Africa/Lagos" },  
+    { continent: "Africa", flag: "🇰🇪", city: "Nairobi", tz: "Africa/Nairobi" },  
+    { continent: "Africa", flag: "🇿🇦", city: "Johannesburg", tz: "Africa/Johannesburg" },  
+    { continent: "Europe", flag: "🇬🇧", city: "London", tz: "Europe/London" },  
+    { continent: "Europe", flag: "🇫🇷", city: "Paris", tz: "Europe/Paris" },  
+    { continent: "Europe", flag: "🇩🇪", city: "Berlin", tz: "Europe/Berlin" },  
+    { continent: "Asia", flag: "🇦🇪", city: "Dubai", tz: "Asia/Dubai" },  
+    { continent: "Asia", flag: "🇮🇳", city: "New Delhi", tz: "Asia/Kolkata" },  
+    { continent: "Asia", flag: "🇯🇵", city: "Tokyo", tz: "Asia/Tokyo" },  
+    { continent: "Asia", flag: "🇨🇳", city: "Beijing", tz: "Asia/Shanghai" },  
+    { continent: "Americas", flag: "🇺🇸", city: "New York", tz: "America/New_York" },  
+    { continent: "Americas", flag: "🇺🇸", city: "Los Angeles", tz: "America/Los_Angeles" },  
+    { continent: "Americas", flag: "🇧🇷", city: "São Paulo", tz: "America/Sao_Paulo" },  
+    { continent: "Oceania", flag: "🇦🇺", city: "Sydney", tz: "Australia/Sydney" },  
+    { continent: "Oceania", flag: "🇳🇿", city: "Auckland", tz: "Pacific/Auckland" },  
+    { continent: "UTC", flag: "🌍", city: "UTC", tz: "UTC" }  
+  ];  
+  
+  let rows = "";  
+  cities.forEach(item => {  
+    const time = new Date().toLocaleTimeString("en-GB", {  
+      timeZone: item.tz,  
+      hour: "2-digit",  
+      minute: "2-digit",  
+      second: "2-digit"  
+    });  
+    rows += `  
+      <tr>  
+        <td class="continent">${item.continent}</td>  
+        <td>${item.flag} ${item.city}</td>  
+        <td>${time}</td>  
+      </tr>  
+    `;  
+  });  
+  
+  document.getElementById("world-body").innerHTML = rows;  
+}  
+  
+/* ================= RUN ================= */  
+setInterval(clock, 1000);  
+setInterval(world, 1000);  
+  
+clock();  
+world();  
+  
+</script>  
+  
+</body>  
+</html>  
