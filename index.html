@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Clock App</title>
+<style>
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+    background: #0e1116;
+    color: #eaeaea;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px 0;
+    transition: 0.3s;
+  }
+  body.light { background: #f4f6f8; color: #111; }
+
+  h2 {
+    font-size: 12px; letter-spacing: 5px; font-weight: 500;
+    opacity: 0.6; margin-bottom: 20px;
+  }
+
+  .clock {
+    display: flex; gap: 12px; padding: 24px 26px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+  }
+  body.light .clock { background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+
+  .block { text-align: center; }
+  .time {
+    width: 85px; height: 75px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; font-weight: 600;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+  }
+  body.light .time { background: #f0f0f0; }
+  .label { margin-top: 6px; font-size: 10px; letter-spacing: 2px; opacity: 0.55; }
+  #ampm { margin-top: 8px; font-size: 11px; opacity: 0.7; }
+
+  .controls { margin-top: 18px; display: flex; gap: 8px; }
+  button {
+    padding: 8px 12px; border: none; border-radius: 8px;
+    font-size: 12px; cursor: pointer;
+    background: #2d6cdf; color: white;
+  }
+  button:hover { opacity: 0.85; }
+
+  .world { margin-top: 24px; width: 90%; max-width: 600px; transition: 0.3s; }
+  .world h3 {
+    text-align: center; font-size: 11px; letter-spacing: 3px;
+    font-weight: 500; opacity: 0.6; margin-bottom: 12px;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    border-radius: 12px; overflow: hidden;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  }
+  body.light table { background: white; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+  th, td { padding: 10px 12px; text-align: left; font-size: 12px; }
+  th {
+    font-size: 11px; letter-spacing: 1px; opacity: 0.7;
+    background: rgba(255,255,255,0.06);
+  }
+  body.light th { background: #f0f0f0; }
+  tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.06); }
+  body.light tr:not(:last-child) td { border-bottom: 1px solid #e8e8e8; }
+  .continent { font-weight: 600; opacity: 0.8; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+  <h2>MODERN CLOCK</h2>
+
+  <div class="clock">
+    <div class="block">
+      <div class="time" id="h">{{ h }}</div>
+      <div class="label">HOURS</div>
+    </div>
+    <div class="block">
+      <div class="time" id="m">{{ m }}</div>
+      <div class="label">MINUTES</div>
+    </div>
+    <div class="block">
+      <div class="time" id="s">{{ s }}</div>
+      <div class="label">SECONDS</div>
+      <div id="ampm">{{ ampm }}</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onclick="toggleTheme()">Theme</button>
+    <button onclick="toggleWorld()">Focus Mode</button>
+  </div>
+
+  <div class="world" id="world">
+    <h3>WORLD CLOCK</h3>
+    <table>
+      <thead>
+        <tr><th>CONTINENT</th><th>CITY</th><th>TIME</th></tr>
+      </thead>
+      <tbody id="world-body">
+        {% for row in world_rows %}
+        <tr>
+          <td class="continent">{{ row.continent }}</td>
+          <td>{{ row.flag }} {{ row.city }}</td>
+          <td data-tz="{{ row.tz }}">{{ row.time }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+<script>
+/* Only used for live ticking — the initial render is Python-rendered */
+function pad(n) { return n < 10 ? "0" + n : n; }
+
+function tickLocal() {
+  const d = new Date();
+  let h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+  let ampm = "AM";
+  if (h >= 12) { ampm = "PM"; if (h > 12) h -= 12; }
+  if (h === 0) h = 12;
+  document.getElementById("h").innerText = pad(h);
+  document.getElementById("m").innerText = pad(m);
+  document.getElementById("s").innerText = pad(s);
+  document.getElementById("ampm").innerText = ampm;
+}
+
+function tickWorld() {
+  document.querySelectorAll("#world-body td[data-tz]").forEach(td => {
+    td.innerText = new Date().toLocaleTimeString("en-GB", {
+      timeZone: td.dataset.tz,
+      hour: "2-digit", minute: "2-digit", second: "2-digit"
+    });
+  });
+}
+
+function toggleTheme() { document.body.classList.toggle("light"); }
+function toggleWorld() { document.getElementById("world").classList.toggle("hidden"); }
+
+setInterval(tickLocal, 1000);
+setInterval(tickWorld, 1000);
+</script>
+</body>
+</html>
